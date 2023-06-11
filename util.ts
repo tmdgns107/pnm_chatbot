@@ -30,7 +30,7 @@ export async function callGptAPI(userId: string, text: string): Promise<any>{
 
         return response.data;
     }catch (e) {
-        console.log("Error in callGptAPI", e);
+        console.log("Error in callGptAPI", JSON.stringify(e, null, 2));
         return false;
     }
 }
