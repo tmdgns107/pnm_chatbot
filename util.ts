@@ -22,7 +22,7 @@ export async function callGptAPI(userId: string, text: string): Promise<any>{
             }
         );
 
-        console.log(`callGptAPI response.data ${response.data}`);
+        console.log(`callGptAPI response.data ${JSON.stringify(response.data, null, 2)}`);
         if(!response.data){
             console.log("GPT API response error");
             return false;
@@ -30,7 +30,7 @@ export async function callGptAPI(userId: string, text: string): Promise<any>{
 
         return response.data;
     }catch (e) {
-        console.log("Error in addressExtract", e);
+        console.log("Error in callGptAPI", e);
         return false;
     }
 }
