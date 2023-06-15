@@ -1,26 +1,23 @@
-import axios from 'axios';
+import { Configuration, OpenAIApi } from "openai";
 
 /** GPT API **/
-export async function callGptAPI(userId: string, text: string): Promise<any>{
+export async function callGptAPI(messages: any[]): Promise<any>{
     try{
         const GPT_API_KEY: string = process.env.GPT_API_KEY;
-        const response = await axios.post(
-            'https://api.openai.com/v1/engines/davinci/completions',
-            {
-                prompt: `${text}\n 질문의 답변은 'answer' 변수에 전달해주기 바란다.`,
-                max_tokens: 300,
-                temperature: 0.7,
-                n: 1,
-                stop: '\n',
-                user_id: userId
-            },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${GPT_API_KEY}`,
-                },
-            }
-        );
+        const configuration = new Configuration({
+            apiKey: GPT_API_KEY,
+        });
+        const openai = new OpenAIApi(configuration);
+
+        const response = await openai.createChatCompletion({
+            model: "gpt-3.5-turbo",
+            messages: messages,
+            temperature: 0.9,
+            max_tokens: 150,
+            top_p: 1,
+            frequency_penalty: 0.0,
+            presence_penalty: 0.6,
+        });
 
         console.log(`callGptAPI response.data ${JSON.stringify(response.data, null, 2)}`);
         if(!response.data){
@@ -28,7 +25,13 @@ export async function callGptAPI(userId: string, text: string): Promise<any>{
             return false;
         }
 
-        return response.data;
+        let answer: any = {};
+        answer.role = 'system';
+        answer.content = response.data.choices[0].message.content;
+
+        messages.push(answer);
+
+        return messages;
     }catch (e) {
         console.log("Error in callGptAPI", JSON.stringify(e, null, 2));
         return false;
