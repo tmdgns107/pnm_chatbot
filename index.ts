@@ -17,6 +17,8 @@ export const handler: Handler = async (event: APIGatewayProxyEvent): Promise<API
             return sendResponse(102, [], 'message is required.');
         }
 
+        console.log("typeof messages", typeof messages);
+        console.log("messages", messages);
         let returnMessages = await util.callGptAPI(messages);
         console.log("returnMessages", returnMessages);
 
